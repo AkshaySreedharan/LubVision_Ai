@@ -235,6 +235,179 @@ function ImageCropper({ imageSrc, onApply, onCancel, onReset }) {
 }
 
 // ============================================================
+// CAMERA ACCESS & PERMISSION POPUP MODAL COMPONENT
+// ============================================================
+function CameraAccessModal({
+  show,
+  onHide,
+  statusType,
+  cameraError,
+  onRetry,
+  onUploadClick
+}) {
+  const isDenied = statusType === 'denied';
+  const isNotFound = statusType === 'not_found';
+  const isInUse = statusType === 'in_use';
+
+  return (
+    <Modal
+      show={show}
+      onHide={onHide}
+      centered
+      className="loob-camera-modal"
+      backdrop="static"
+      keyboard={true}
+    >
+      <Modal.Header closeButton>
+        <div className="d-flex align-items-center gap-2">
+          <div style={{
+            width: '34px',
+            height: '34px',
+            borderRadius: '9px',
+            background: isDenied ? 'rgba(245, 166, 35, 0.15)' : 'rgba(0, 184, 217, 0.15)',
+            border: `1px solid ${isDenied ? 'rgba(245, 166, 35, 0.45)' : 'rgba(0, 184, 217, 0.45)'}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: isDenied ? '#f5a623' : '#00b8d9'
+          }}>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+          </div>
+          <div>
+            <div className="fw-bold" style={{ fontSize: '0.95rem', letterSpacing: '0.5px' }}>
+              {isDenied ? 'CAMERA PERMISSION REQUIRED' : 'DEVICE CAMERA ACCESS'}
+            </div>
+            <div className="small text-muted" style={{ fontSize: '0.72rem' }}>
+              LUBRICANT OPTICAL INSPECTION SYSTEM
+            </div>
+          </div>
+        </div>
+      </Modal.Header>
+
+      <Modal.Body className="p-4">
+        <div className="camera-modal-hero">
+          <div className={`camera-modal-icon-wrapper ${isDenied ? 'warning' : ''}`}>
+            <div className="pulse-ring"></div>
+            {isDenied ? (
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#f5a623" strokeWidth="2">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            ) : isNotFound ? (
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#00b8d9" strokeWidth="2">
+                <line x1="1" y1="1" x2="23" y2="23"></line>
+                <path d="M21 21H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h3m3-3h6l2 3h4a2 2 0 0 1 2 2v9.34"></path>
+                <circle cx="12" cy="13" r="4"></circle>
+              </svg>
+            ) : (
+              <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#00b8d9" strokeWidth="2">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                <circle cx="12" cy="13" r="4"/>
+              </svg>
+            )}
+          </div>
+
+          <div className="camera-modal-title">
+            {isDenied
+              ? "Camera Access Was Blocked"
+              : isNotFound
+              ? "No Camera Hardware Detected"
+              : isInUse
+              ? "Camera Is Currently In Use"
+              : "Enable Live Lubricant Camera"}
+          </div>
+
+          <div className="camera-modal-subtitle">
+            {isDenied
+              ? "Your web browser blocked camera permissions for this site. To capture real-time oil samples, please allow camera access."
+              : isNotFound
+              ? "We could not find an active built-in webcam or external USB video device. You can easily analyze samples by uploading a photo."
+              : isInUse
+              ? "Another program (like Zoom, Teams, or another browser window) is using your webcam. Please close it and retry."
+              : "Allow camera access to inspect fluid samples with real-time Square ROI positioning and automatic lighting verification."}
+          </div>
+
+          {isDenied ? (
+            <div className="camera-instruction-box">
+              <div className="fw-semibold text-light small mb-2 text-uppercase" style={{ letterSpacing: '0.8px' }}>
+                How to Enable in Browser:
+              </div>
+              <div className="camera-instruction-step">
+                <div className="camera-step-number">1</div>
+                <div className="camera-step-text">
+                  Look at your browser's address bar at the top of the window and click the <strong>Lock 🔒</strong> or <strong>Site Controls 🎛️</strong> icon next to the URL.
+                </div>
+              </div>
+              <div className="camera-instruction-step">
+                <div className="camera-step-number">2</div>
+                <div className="camera-step-text">
+                  Find <strong>Camera</strong> in the permissions list and switch it to <strong>Allow</strong>.
+                </div>
+              </div>
+              <div className="camera-instruction-step">
+                <div className="camera-step-number">3</div>
+                <div className="camera-step-text">
+                  Click the <strong>Retry Camera Access</strong> button below to activate your live feed.
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="camera-feature-grid">
+              <div className="camera-feature-pill">
+                <div className="camera-feature-pill-icon">🎯</div>
+                <div className="fw-semibold text-light mb-1">Square ROI Guide</div>
+                <div>Align oil droplets accurately for optimal feature extraction</div>
+              </div>
+              <div className="camera-feature-pill">
+                <div className="camera-feature-pill-icon">⚡</div>
+                <div className="fw-semibold text-light mb-1">Instant Screening</div>
+                <div>Rapid one-click capture with automated size scaling</div>
+              </div>
+              <div className="camera-feature-pill">
+                <div className="camera-feature-pill-icon">🔒</div>
+                <div className="fw-semibold text-light mb-1">Device Privacy</div>
+                <div>Video streams are captured securely on your local device</div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="d-flex flex-column gap-2 mt-4">
+          <Button
+            className="btn-loob-primary w-100 py-2 d-flex align-items-center justify-content-center gap-2"
+            onClick={onRetry}
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+              <circle cx="12" cy="13" r="4"/>
+            </svg>
+            <span>{isDenied ? '↻ Retry Camera Access' : 'Enable Camera Access'}</span>
+          </Button>
+
+          <Button
+            className="btn-loob-secondary w-100 py-2 d-flex align-items-center justify-content-center gap-2"
+            onClick={onUploadClick}
+          >
+            <span>📁 Upload Sample Photo Instead</span>
+          </Button>
+
+          <Button
+            variant="link"
+            className="text-muted text-decoration-none small py-1 mt-1"
+            onClick={onHide}
+          >
+            Dismiss
+          </Button>
+        </div>
+      </Modal.Body>
+    </Modal>
+  );
+}
+
+// ============================================================
 // CAMERA / IMAGE PREVIEW & CROP PANEL
 // ============================================================
 function CameraPanel({
@@ -250,12 +423,14 @@ function CameraPanel({
   const fileInputRef = useRef(null);
   const [cameraActive, setCameraActive] = useState(false);
   const [cameraError, setCameraError] = useState(null);
+  const [cameraStatusType, setCameraStatusType] = useState('standby'); // 'standby', 'denied', 'not_found', 'in_use', 'general'
+  const [showCameraModal, setShowCameraModal] = useState(false);
   const [isCropping, setIsCropping] = useState(false);
   const [uncroppedImage, setUncroppedImage] = useState(null);
 
   useEffect(() => {
     if (!capturedImage) {
-      startCamera();
+      startCamera(false);
       setIsCropping(false);
       setUncroppedImage(null);
     } else {
@@ -267,9 +442,12 @@ function CameraPanel({
     };
   }, [capturedImage]);
 
-  const startCamera = async () => {
+  const startCamera = async (openModalOnFailure = false) => {
     setCameraError(null);
     try {
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        throw new Error("MEDIA_UNSUPPORTED");
+      }
       const stream = await navigator.mediaDevices.getUserMedia({
         video: { width: { ideal: 1280 }, height: { ideal: 960 }, facingMode: 'environment' }
       });
@@ -277,11 +455,37 @@ function CameraPanel({
         videoRef.current.srcObject = stream;
         videoRef.current.play();
         setCameraActive(true);
+        setShowCameraModal(false);
+        setCameraError(null);
+        setCameraStatusType('active');
       }
     } catch (err) {
       console.warn("Camera access warning:", err);
       setCameraActive(false);
-      setCameraError("Camera unavailable or permission denied. Use 'Upload Image' to submit a lubricant sample.");
+
+      let statusType = 'general';
+      let message = "Camera feed offline. Enable camera permissions or upload an image.";
+
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+        statusType = 'denied';
+        message = "Camera access was denied by browser permissions.";
+      } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+        statusType = 'not_found';
+        message = "No physical camera capture hardware was detected.";
+      } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+        statusType = 'in_use';
+        message = "Camera is currently in use by another application.";
+      } else if (err.message === 'MEDIA_UNSUPPORTED') {
+        statusType = 'unsupported';
+        message = "Camera API requires a secure connection (HTTPS or localhost).";
+      }
+
+      setCameraStatusType(statusType);
+      setCameraError(message);
+
+      if (openModalOnFailure) {
+        setShowCameraModal(true);
+      }
     }
   };
 
@@ -292,6 +496,10 @@ function CameraPanel({
       videoRef.current.srcObject = null;
     }
     setCameraActive(false);
+  };
+
+  const handleRequestCamera = () => {
+    startCamera(true);
   };
 
   const handleCaptureClick = () => {
@@ -394,30 +602,83 @@ function CameraPanel({
             <canvas ref={canvasRef} className="d-none"></canvas>
 
             {/* Square ROI Overlay Guide */}
-            <div className="roi-overlay">
-              <div className="roi-corner roi-top-left"></div>
-              <div className="roi-corner roi-top-right"></div>
-              <div className="roi-corner roi-bottom-left"></div>
-              <div className="roi-corner roi-bottom-right"></div>
-              <div className="roi-label">SQUARE ROI</div>
-            </div>
+            {cameraActive && (
+              <div className="roi-overlay">
+                <div className="roi-corner roi-top-left"></div>
+                <div className="roi-corner roi-top-right"></div>
+                <div className="roi-corner roi-bottom-left"></div>
+                <div className="roi-corner roi-bottom-right"></div>
+                <div className="roi-label">SQUARE ROI</div>
+              </div>
+            )}
 
             {!cameraActive && (
-              <div className="text-center p-4 text-muted" style={{ zIndex: 5 }}>
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#64748b" strokeWidth="1.5" className="mb-2">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
-                  <circle cx="12" cy="13" r="4"/>
-                </svg>
-                <div className="fw-semibold text-light mb-1">Camera Feed Offline</div>
-                <div className="small text-muted mb-3">{cameraError || "Ready to capture or upload sample image."}</div>
-                <Button 
-                  size="sm" 
-                  variant="outline-info" 
-                  onClick={startCamera}
-                  className="px-3"
+              <div className="camera-standby-view">
+                <div 
+                  className="camera-standby-lens"
+                  onClick={handleRequestCamera}
+                  title="Click to Enable Camera"
                 >
-                  Enable Camera
-                </Button>
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00b8d9" strokeWidth="1.8">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                  </svg>
+                </div>
+                
+                <div className="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill mb-2"
+                     style={{
+                       background: cameraStatusType === 'denied' ? 'rgba(245, 166, 35, 0.12)' : 'rgba(0, 184, 217, 0.12)',
+                       border: `1px solid ${cameraStatusType === 'denied' ? 'rgba(245, 166, 35, 0.35)' : 'rgba(0, 184, 217, 0.35)'}`,
+                       fontSize: '0.75rem',
+                       fontWeight: '600',
+                       color: cameraStatusType === 'denied' ? '#f5a623' : '#00b8d9'
+                     }}>
+                  <span className="pulse-dot" style={{
+                    background: cameraStatusType === 'denied' ? '#f5a623' : '#00b8d9',
+                    boxShadow: `0 0 8px ${cameraStatusType === 'denied' ? '#f5a623' : '#00b8d9'}`
+                  }}></span>
+                  {cameraStatusType === 'denied' ? 'PERMISSION BLOCKED' : 'CAMERA STANDBY'}
+                </div>
+
+                <h6 className="fw-bold text-light mb-1">
+                  {cameraStatusType === 'denied' ? 'Camera Access Required' : 'Live Camera Inactive'}
+                </h6>
+                <p className="small text-muted mb-3" style={{ maxWidth: '320px', margin: '0 auto 1rem auto' }}>
+                  {cameraError || "Enable device camera for real-time Square ROI inspection or upload an image file."}
+                </p>
+
+                <div className="d-flex align-items-center justify-content-center gap-2 flex-wrap">
+                  <Button 
+                    size="sm" 
+                    className="btn-loob-primary px-3 py-2 d-inline-flex align-items-center gap-2"
+                    onClick={handleRequestCamera}
+                  >
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2">
+                      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                      <circle cx="12" cy="13" r="4"/>
+                    </svg>
+                    <span>Enable Camera</span>
+                  </Button>
+
+                  <Button 
+                    size="sm" 
+                    className="btn-loob-secondary px-3 py-2"
+                    onClick={() => fileInputRef.current && fileInputRef.current.click()}
+                  >
+                    <span>📁 Upload Image</span>
+                  </Button>
+                </div>
+
+                <div className="mt-3">
+                  <button
+                    type="button"
+                    className="btn btn-link text-muted small p-0 text-decoration-none"
+                    style={{ fontSize: '0.76rem' }}
+                    onClick={() => setShowCameraModal(true)}
+                  >
+                    ℹ How to enable camera permissions
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -500,6 +761,21 @@ function CameraPanel({
             )}
           </Stack>
         )}
+
+        {/* POPUP MODAL FOR CAMERA ACCESS & PERMISSIONS */}
+        <CameraAccessModal
+          show={showCameraModal}
+          onHide={() => setShowCameraModal(false)}
+          statusType={cameraStatusType}
+          cameraError={cameraError}
+          onRetry={handleRequestCamera}
+          onUploadClick={() => {
+            setShowCameraModal(false);
+            if (fileInputRef.current) {
+              fileInputRef.current.click();
+            }
+          }}
+        />
       </Card.Body>
     </Card>
   );

@@ -166,6 +166,18 @@ class LoobVisionHandler(SimpleHTTPRequestHandler):
             response_data = dict(result)
             response_data["report"] = report_data
             response_data["report_id"] = report_id
+
+            # Ensure top-level fields are fully synchronized with validated report summary
+            exec_summary = report_data.get("executive_summary", {})
+            if not response_data.get("final_class") or response_data.get("final_class") not in ("c1", "c2", "c3", "non-lubricant"):
+                response_data["final_class"] = exec_summary.get("final_class", response_data.get("final_class", "c3"))
+            if not response_data.get("status"):
+                response_data["status"] = exec_summary.get("condition_label", "Fully-degraded")
+            if not response_data.get("confidence") or response_data.get("confidence") == 0.0:
+                response_data["confidence"] = exec_summary.get("confidence_score", 0.85)
+            if not response_data.get("reasoning"):
+                response_data["reasoning"] = exec_summary.get("summary_text", "")
+
             self.send_json_response(response_data)
 
         except Exception as e:
@@ -262,13 +274,16 @@ class LoobVisionHandler(SimpleHTTPRequestHandler):
             self.send_json_response({"error": f"Failed to generate PDF: {str(e)}"}, status_code=500)
 
     def send_json_response(self, data, status_code=200):
-        body = json.dumps(data, default=str).encode("utf-8")
-        self.send_response(status_code)
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Access-Control-Allow-Origin", "*")
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            body = json.dumps(data, default=str).encode("utf-8")
+            self.send_response(status_code)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(body)
+        except (ConnectionResetError, ConnectionAbortedError, BrokenPipeError, OSError):
+            pass
 
     def do_OPTIONS(self):
         self.send_response(200)

@@ -11,7 +11,7 @@ from server import LoobVisionHandler, workflow_app
 class handler(LoobVisionHandler):
     """Vercel serverless function entrypoint for /api/*"""
     def do_POST(self):
-        self.handle_analyze()
+        super().do_POST()
 
     def do_GET(self):
         clean_path = self.path.split("?")[0].rstrip("/")
@@ -22,11 +22,6 @@ class handler(LoobVisionHandler):
                 "backend_ready": workflow_app is not None
             })
             return
-        
-        self.send_json_response({
-            "status": "ready",
-            "model": "Original Image Model",
-            "backend_ready": workflow_app is not None
-        })
+        super().do_GET()
 
 app = handler

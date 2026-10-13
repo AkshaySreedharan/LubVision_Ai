@@ -1,0 +1,38 @@
+# Python Virtual Environments
+venv/
+.venv/
+env/
+ENV/
+
+# Python Bytecode & Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+
+# Tests & Test Images (prevent bundling test assets)
+tests/
+
+# Temporary Uploads & Logs
+temp_uploads/
+logs/
+*.log
+
+# Environment variables & secrets (configure in Vercel project settings)
+.env
+.env.local
+.env.*.local
+*.env
+
+# IDE & Editor files
+.vscode/
+.idea/
+.git/
+.gitignore
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Deployment PDF artifacts
+README_DEPLOYMENT.pdf

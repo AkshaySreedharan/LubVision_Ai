@@ -729,6 +729,198 @@ body {
 }
 
 /* ============================================================
+   CAMERA PERMISSION & ENABLE POPUP MODAL STYLES
+   ============================================================ */
+
+.loob-camera-modal .modal-content {
+  background-color: var(--loob-bg-secondary);
+  background-image: radial-gradient(circle at top right, rgba(0, 184, 217, 0.08), transparent 60%);
+  border: 1px solid var(--loob-border-light);
+  border-radius: 16px;
+  color: var(--loob-text-primary);
+  box-shadow: 0 25px 70px rgba(0, 0, 0, 0.85), 0 0 35px rgba(0, 184, 217, 0.15);
+  overflow: hidden;
+}
+
+.loob-camera-modal .modal-header {
+  background-color: var(--loob-card-header);
+  border-bottom: 1px solid var(--loob-border);
+  padding: 1.1rem 1.5rem;
+}
+
+.loob-camera-modal .btn-close {
+  filter: invert(1) grayscale(100%) brightness(200%);
+  opacity: 0.75;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.loob-camera-modal .btn-close:hover {
+  opacity: 1;
+  transform: rotate(90deg);
+}
+
+.camera-modal-hero {
+  text-align: center;
+  padding: 0.75rem 0.5rem 1.25rem 0.5rem;
+}
+
+.camera-modal-icon-wrapper {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  margin: 0 auto 1.25rem auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(0, 184, 217, 0.2), rgba(0, 102, 204, 0.3));
+  border: 2px solid var(--loob-cyan);
+  box-shadow: 0 0 25px var(--loob-cyan-glow);
+}
+
+.camera-modal-icon-wrapper.warning {
+  background: linear-gradient(135deg, rgba(245, 166, 35, 0.2), rgba(255, 77, 94, 0.25));
+  border-color: var(--loob-c2-amber);
+  box-shadow: 0 0 25px rgba(245, 166, 35, 0.35);
+}
+
+.camera-modal-icon-wrapper .pulse-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 2px solid var(--loob-cyan);
+  opacity: 0.5;
+  animation: radar-pulse 2.2s infinite ease-out;
+}
+
+.camera-modal-icon-wrapper.warning .pulse-ring {
+  border-color: var(--loob-c2-amber);
+}
+
+@keyframes radar-pulse {
+  0% { transform: scale(0.95); opacity: 0.8; }
+  50% { transform: scale(1.18); opacity: 0.2; }
+  100% { transform: scale(1.35); opacity: 0; }
+}
+
+.camera-modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.4rem;
+}
+
+.camera-modal-subtitle {
+  color: var(--loob-text-secondary);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.camera-instruction-box {
+  background: rgba(17, 24, 39, 0.7);
+  border: 1px solid var(--loob-border);
+  border-radius: 12px;
+  padding: 1.1rem 1.25rem;
+  margin-top: 1.25rem;
+  text-align: left;
+}
+
+.camera-instruction-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 0.85rem;
+}
+
+.camera-instruction-step:last-child {
+  margin-bottom: 0;
+}
+
+.camera-step-number {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--loob-cyan);
+  color: #04070e;
+  font-weight: 800;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 10px var(--loob-cyan-glow);
+}
+
+.camera-step-text {
+  font-size: 0.84rem;
+  color: var(--loob-text-primary);
+  line-height: 1.45;
+}
+
+.camera-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 10px;
+  margin-top: 1.25rem;
+}
+
+.camera-feature-pill {
+  background: rgba(12, 18, 34, 0.6);
+  border: 1px solid var(--loob-border);
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--loob-text-secondary);
+  transition: all 0.2s ease;
+}
+
+.camera-feature-pill:hover {
+  border-color: var(--loob-cyan);
+  color: var(--loob-text-primary);
+}
+
+.camera-feature-pill-icon {
+  font-size: 1.2rem;
+  margin-bottom: 4px;
+  color: var(--loob-cyan);
+}
+
+/* Enhanced Standby Container inside Camera Viewfinder */
+.camera-standby-view {
+  position: relative;
+  z-index: 5;
+  text-align: center;
+  padding: 1.5rem;
+  max-width: 440px;
+}
+
+.camera-standby-lens {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  margin: 0 auto 1rem auto;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0c152a 0%, #050811 100%);
+  border: 2px solid var(--loob-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.camera-standby-lens:hover {
+  border-color: var(--loob-cyan);
+  box-shadow: 0 0 25px var(--loob-cyan-glow);
+  transform: scale(1.05);
+}
+
+/* ============================================================
    LLM ANALYSIS REPORT MODAL & PREVIEW STYLES
    ============================================================ */
 
